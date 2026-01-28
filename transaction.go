@@ -43,14 +43,14 @@ func (p poolDBTX) QueryRow(ctx context.Context, sql string, args ...any) pgx.Row
 	return p.pool.QueryRow(ctx, sql, args...)
 }
 
-func Exec(pool *pgxpool.Pool, ctx context.Context) DBTX {
+func Exec(ctx context.Context, pool *pgxpool.Pool) DBTX {
 	if tx, ok := From(ctx); ok {
 		return tx
 	}
 	return poolDBTX{pool: pool}
 }
 
-func Transaction(pool *pgxpool.Pool, ctx context.Context, fn func(ctx context.Context) error) error {
+func Transaction(ctx context.Context, pool *pgxpool.Pool, fn func(ctx context.Context) error) error {
 	if _, ok := From(ctx); ok {
 		return fn(ctx)
 	}
